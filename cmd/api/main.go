@@ -7,8 +7,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/gofiber/helmet"
+	"github.com/gustavoteixeira8/url-shortener/src/db"
+	"github.com/gustavoteixeira8/url-shortener/src/routes"
 	"github.com/gustavoteixeira8/url-shortener/src/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -27,7 +29,7 @@ func SetupServer() error {
 	app.Use(cors.New())
 	app.Use(helmet.New())
 
-	// routes.SetupUserRoutes(app)
+	routes.SetupRoutes(app)
 
 	serverPort := utils.GetEnv("SERVER_PORT")
 
@@ -48,6 +50,9 @@ func SetupServer() error {
 
 func main() {
 	utils.LoadDotenv()
+
+	db.SetupDatabase()
+	db.RunMigration()
 
 	logrus.Fatal(SetupServer())
 }
