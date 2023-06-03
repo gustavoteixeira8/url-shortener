@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gustavoteixeira8/url-shortener/src/cache"
 	"github.com/gustavoteixeira8/url-shortener/src/db"
 	"github.com/gustavoteixeira8/url-shortener/src/routes"
 	"github.com/gustavoteixeira8/url-shortener/src/utils"
@@ -53,6 +54,7 @@ func main() {
 
 	db.SetupDatabase()
 	db.RunMigration()
+	cache.SetupCache()
 
 	logrus.Fatal(SetupServer())
 }

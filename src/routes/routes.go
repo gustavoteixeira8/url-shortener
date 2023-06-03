@@ -6,7 +6,7 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
-	route := app.Group("/api")
-
-	route.Post("/", controllers.CreateUrlShortController)
+	app.Post("/", controllers.CreateUrlShortController)
+	app.Get("/:id", controllers.RedirectURLShortController)
+	app.Get("/:id/details", controllers.GetURLShortDetailsController)
 }
