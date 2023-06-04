@@ -32,7 +32,7 @@ func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) (*entities.URL
 		return nil, cerrors.ErrInvalidURLFormat
 	}
 
-	hostWithProtocol := fmt.Sprintf("https://%s", purl.Host)
+	hostWithProtocol := fmt.Sprintf("https://%s%s", purl.Host, purl.Path)
 
 	resp, err := http.Get(hostWithProtocol)
 	if err != nil {
