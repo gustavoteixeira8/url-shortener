@@ -1,11 +1,11 @@
 package usecases
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 
+	"github.com/gustavoteixeira8/url-shortener/src/cerrors"
 	"github.com/gustavoteixeira8/url-shortener/src/entities"
 	"github.com/gustavoteixeira8/url-shortener/src/repositories"
 )
@@ -21,7 +21,7 @@ type CreateUrlShortRequest struct {
 
 func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) (*entities.URLShort, error) {
 	if req.URL == "" {
-		return nil, errors.New("url is required")
+		return nil, cerrors.ErrUrlIsRequired
 	}
 
 	// ping na URL para verificar se ele existe
@@ -29,28 +29,28 @@ func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) (*entities.URL
 	purl, err := url.ParseRequestURI(req.URL)
 
 	if err != nil {
-		return nil, err
+		return nil, cerrors.ErrInvalidURLFormat
 	}
 
 	hostWithProtocol := fmt.Sprintf("https://%s", purl.Host)
 
 	resp, err := http.Get(hostWithProtocol)
 	if err != nil {
-		return nil, err
+		return nil, cerrors.ErrCantPingUrl
 	}
 
 	if resp.StatusCode > 399 {
-		return nil, fmt.Errorf("something when wrong with this url (%s)", req.URL)
+		return nil, cerrors.ErrCantPingUrl
 	}
 
 	nameExists := u.urlShortRepository.ExistsWithName(req.Name)
 	if nameExists {
-		return nil, errors.New("name already exists")
+		return nil, cerrors.ErrNameAlreadyExists
 	}
 
 	urlExists := u.urlShortRepository.ExistsWithURL(req.URL)
 	if urlExists {
-		return nil, errors.New("url already exists")
+		return nil, cerrors.ErrUrlAlreadyExists
 	}
 
 	urlShort, err := entities.NewURLShort(&entities.URLShort{

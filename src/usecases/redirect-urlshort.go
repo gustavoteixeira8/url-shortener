@@ -1,10 +1,10 @@
 package usecases
 
 import (
-	"errors"
 	"time"
 
 	"github.com/gustavoteixeira8/url-shortener/src/cache"
+	"github.com/gustavoteixeira8/url-shortener/src/cerrors"
 	"github.com/gustavoteixeira8/url-shortener/src/entities"
 	"github.com/gustavoteixeira8/url-shortener/src/repositories"
 	"github.com/sirupsen/logrus"
@@ -21,7 +21,7 @@ type RedirectURLShortRequest struct {
 
 func (u redirectURLShortUseCases) Exec(req RedirectURLShortRequest) (*entities.URLShort, error) {
 	if req.Name == "" {
-		return nil, errors.New("name cannot be empty")
+		return nil, cerrors.ErrNameIsRequired
 	}
 
 	var (
@@ -58,7 +58,7 @@ func (u redirectURLShortUseCases) Exec(req RedirectURLShortRequest) (*entities.U
 		return urlShort, nil
 	}
 
-	return nil, errors.New("url not found in our database")
+	return nil, cerrors.ErrUrlNotFound
 }
 
 func NewRedirectURLShortUseCases() *redirectURLShortUseCases {

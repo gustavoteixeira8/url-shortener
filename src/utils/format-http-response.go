@@ -1,6 +1,10 @@
 package utils
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/gustavoteixeira8/url-shortener/src/cerrors"
+)
 
 type Body struct {
 	Message string      `json:"message"`
@@ -80,4 +84,29 @@ func InternalError(message string, data interface{}) *HttpResponse {
 		},
 		Status: http.StatusInternalServerError,
 	}
+}
+
+func GetErrorInHttpFormat(err error) *HttpResponse {
+	if err == nil {
+		return nil
+	}
+
+	switch err {
+	case cerrors.ErrCantPingUrl:
+		fallthrough
+	case cerrors.ErrInvalidURLFormat:
+		fallthrough
+	case cerrors.ErrNameIsRequired:
+		fallthrough
+	case cerrors.ErrUrlIsRequired:
+		fallthrough
+	case cerrors.ErrUrlAlreadyExists:
+		fallthrough
+	case cerrors.ErrNameAlreadyExists:
+		return BadRequest(err.Error(), nil)
+	case cerrors.ErrUrlNotFound:
+		return NotFound(err.Error(), nil)
+	}
+
+	return InternalError(err.Error(), nil)
 }

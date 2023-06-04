@@ -17,8 +17,9 @@ func RedirectURLShortController(ctx *fiber.Ctx) error {
 	useCase := usecases.NewRedirectURLShortUseCases()
 	urlShort, err := useCase.Exec(req)
 
-	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(utils.InternalError(err.Error(), nil))
+	errFormatted := utils.GetErrorInHttpFormat(err)
+	if errFormatted != nil {
+		return ctx.Status(errFormatted.Status).JSON(errFormatted)
 	}
 
 	err = ctx.Redirect(urlShort.URL, http.StatusMovedPermanently)
