@@ -19,9 +19,9 @@ type CreateUrlShortRequest struct {
 	URL  string `json:"url"`
 }
 
-func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) error {
+func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) (*entities.URLShort, error) {
 	if req.URL == "" {
-		return errors.New("url is required")
+		return nil, errors.New("url is required")
 	}
 
 	// ping na URL para verificar se ele existe
@@ -29,28 +29,28 @@ func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) error {
 	purl, err := url.ParseRequestURI(req.URL)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	hostWithProtocol := fmt.Sprintf("https://%s", purl.Host)
 
 	resp, err := http.Get(hostWithProtocol)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if resp.StatusCode > 399 {
-		return fmt.Errorf("something when wrong with this url (%s)", req.URL)
+		return nil, fmt.Errorf("something when wrong with this url (%s)", req.URL)
 	}
 
 	nameExists := u.urlShortRepository.ExistsWithName(req.Name)
 	if nameExists {
-		return errors.New("name already exists")
+		return nil, errors.New("name already exists")
 	}
 
 	urlExists := u.urlShortRepository.ExistsWithURL(req.URL)
 	if urlExists {
-		return errors.New("url already exists")
+		return nil, errors.New("url already exists")
 	}
 
 	urlShort, err := entities.NewURLShort(&entities.URLShort{
@@ -59,12 +59,18 @@ func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) error {
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = u.urlShortRepository.Save(urlShort)
 
-	return err
+	if err != nil {
+		return nil, err
+	}
+
+	urlShort, err = u.urlShortRepository.FindByName(urlShort.Name)
+
+	return urlShort, err
 }
 
 func NewCreateUrlShortUseCase() *createUrlShortUserCase {

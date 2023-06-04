@@ -18,11 +18,11 @@ func CreateUrlShortController(ctx *fiber.Ctx) error {
 	}
 
 	useCase := usecases.NewCreateUrlShortUseCase()
-	err = useCase.Exec(req)
+	urlShort, err := useCase.Exec(req)
 
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(utils.InternalError(err.Error(), nil))
 	}
 
-	return ctx.Status(http.StatusOK).JSON(utils.Ok("url created successfully", nil))
+	return ctx.Status(http.StatusOK).JSON(utils.Ok("url created successfully", urlShort))
 }

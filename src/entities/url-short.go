@@ -1,11 +1,13 @@
 package entities
 
 import (
+	"net/url"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gustavoteixeira8/url-shortener/src/entities/validations"
+	"github.com/gustavoteixeira8/url-shortener/src/utils"
 )
 
 type URLShort struct {
@@ -46,10 +48,14 @@ func (u *URLShort) SetName(name string) error {
 			return err
 		}
 	} else {
-		name = uuid.NewString()
+		name = utils.NewID()
 	}
 
-	u.Name = strings.Trim(name, " ")
+	name = strings.Trim(name, " ")
+	name = strings.ReplaceAll(name, " ", "-")
+	name = url.PathEscape(name)
+
+	u.Name = name
 	u.UpdatedAt = time.Now()
 
 	return nil

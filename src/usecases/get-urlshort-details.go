@@ -15,12 +15,12 @@ type getURLShortDetailsUseCase struct {
 }
 
 type GetURLShortDetailsRequest struct {
-	ID string `json:"id"`
+	Name string `json:"name"`
 }
 
 func (u getURLShortDetailsUseCase) Exec(req GetURLShortDetailsRequest) (*entities.URLShort, error) {
-	if req.ID == "" {
-		return nil, errors.New("id cannot be empty")
+	if req.Name == "" {
+		return nil, errors.New("name cannot be empty")
 	}
 
 	var (
@@ -28,14 +28,14 @@ func (u getURLShortDetailsUseCase) Exec(req GetURLShortDetailsRequest) (*entitie
 		urlShort *entities.URLShort
 	)
 
-	urlShort, err = u.cache.Get(req.ID)
+	urlShort, err = u.cache.Get(req.Name)
 	if err == nil && urlShort != nil {
 		return urlShort, nil
 	}
 
-	urlShort, err = u.urlShortRepository.FindByID(req.ID)
+	urlShort, err = u.urlShortRepository.FindByName(req.Name)
 	if err == nil && urlShort != nil {
-		u.cache.Set(req.ID, *urlShort, time.Hour*24)
+		u.cache.Set(req.Name, *urlShort, time.Hour*24)
 		return urlShort, nil
 	}
 

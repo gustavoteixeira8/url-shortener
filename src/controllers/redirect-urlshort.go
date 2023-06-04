@@ -11,7 +11,7 @@ import (
 
 func RedirectURLShortController(ctx *fiber.Ctx) error {
 	req := usecases.RedirectURLShortRequest{
-		ID: ctx.Params("id"),
+		Name: ctx.Params("name"),
 	}
 
 	useCase := usecases.NewRedirectURLShortUseCases()

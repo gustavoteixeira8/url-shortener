@@ -10,7 +10,7 @@ import (
 
 func GetURLShortDetailsController(ctx *fiber.Ctx) error {
 	req := usecases.GetURLShortDetailsRequest{
-		ID: ctx.Params("id"),
+		Name: ctx.Params("name"),
 	}
 
 	useCase := usecases.NewGetURLShortDetailsUseCase()

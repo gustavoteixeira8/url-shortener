@@ -7,6 +7,6 @@ import (
 
 func SetupRoutes(app *fiber.App) {
 	app.Post("/", controllers.CreateUrlShortController)
-	app.Get("/:id", controllers.RedirectURLShortController)
-	app.Get("/:id/details", controllers.GetURLShortDetailsController)
+	app.Get("/:name", controllers.RedirectURLShortController)
+	app.Get("/:name/details", controllers.GetURLShortDetailsController)
 }

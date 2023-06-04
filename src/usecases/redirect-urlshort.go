@@ -16,12 +16,12 @@ type redirectURLShortUseCases struct {
 }
 
 type RedirectURLShortRequest struct {
-	ID string `json:"id"`
+	Name string `json:"name"`
 }
 
 func (u redirectURLShortUseCases) Exec(req RedirectURLShortRequest) (*entities.URLShort, error) {
-	if req.ID == "" {
-		return nil, errors.New("id cannot be empty")
+	if req.Name == "" {
+		return nil, errors.New("name cannot be empty")
 	}
 
 	var (
@@ -34,11 +34,11 @@ func (u redirectURLShortUseCases) Exec(req RedirectURLShortRequest) (*entities.U
 			urlShort.AddClick()
 			err = u.urlShortRepository.Save(urlShort)
 			if err != nil {
-				logrus.Errorf("Error counting click in psql to URL %s (%v)", req.ID, err)
+				logrus.Errorf("Error counting click in psql to URL %s (%v)", req.Name, err)
 			}
-			err = u.cache.Set(req.ID, *urlShort, time.Hour*24)
+			err = u.cache.Set(req.Name, *urlShort, time.Hour*24)
 			if err != nil {
-				logrus.Errorf("Error counting click in redis to URL %s (%v)", req.ID, err)
+				logrus.Errorf("Error counting click in redis to URL %s (%v)", req.Name, err)
 			}
 		}
 	}
@@ -47,14 +47,14 @@ func (u redirectURLShortUseCases) Exec(req RedirectURLShortRequest) (*entities.U
 		go countClickFn()
 	}()
 
-	urlShort, err = u.cache.Get(req.ID)
+	urlShort, err = u.cache.Get(req.Name)
 	if err == nil && urlShort != nil {
 		return urlShort, nil
 	}
 
-	urlShort, err = u.urlShortRepository.FindByID(req.ID)
+	urlShort, err = u.urlShortRepository.FindByName(req.Name)
 	if err == nil && urlShort != nil {
-		u.cache.Set(req.ID, *urlShort, time.Hour*24)
+		u.cache.Set(req.Name, *urlShort, time.Hour*24)
 		return urlShort, nil
 	}
 
