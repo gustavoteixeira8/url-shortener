@@ -51,11 +51,7 @@ func (u *URLShort) SetName(name string) error {
 		name = utils.NewID()
 	}
 
-	name = strings.Trim(name, " ")
-	name = strings.ReplaceAll(name, " ", "-")
-	name = url.PathEscape(name)
-
-	u.Name = name
+	u.Name = FormatName(name)
 	u.UpdatedAt = time.Now()
 
 	return nil
@@ -76,4 +72,13 @@ func (u *URLShort) SetURL(newurl string) error {
 func (u *URLShort) AddClick() {
 	u.NumberOfClicks += 1
 	u.UpdatedAt = time.Now()
+}
+
+func FormatName(name string) string {
+	name = strings.Trim(name, " ")
+	name = strings.ReplaceAll(name, " ", "-")
+	name = strings.ReplaceAll(name, "/", "-")
+	name = strings.ReplaceAll(name, "\\", "-")
+	name = url.PathEscape(name)
+	return name
 }

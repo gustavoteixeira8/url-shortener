@@ -43,7 +43,7 @@ func (u *createUrlShortUserCase) Exec(req *CreateUrlShortRequest) (*entities.URL
 		return nil, cerrors.ErrCantPingUrl
 	}
 
-	nameExists := u.urlShortRepository.ExistsWithName(req.Name)
+	nameExists := u.urlShortRepository.ExistsWithName(entities.FormatName(req.Name))
 	if nameExists {
 		return nil, cerrors.ErrNameAlreadyExists
 	}

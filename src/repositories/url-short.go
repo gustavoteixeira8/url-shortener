@@ -33,7 +33,7 @@ func (r URLShortRepository) ExistsWithURL(url string) bool {
 
 func (r URLShortRepository) ExistsWithName(name string) bool {
 	count := new(int64)
-	err := r.db.Where("name = ?", name).Count(count).Error
+	err := r.db.Model(entities.URLShort{}).Where("name = ?", name).Count(count).Error
 
 	if err != nil {
 		return false
