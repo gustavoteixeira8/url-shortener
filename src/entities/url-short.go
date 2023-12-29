@@ -13,7 +13,7 @@ import (
 type URLShort struct {
 	ID             string    `json:"id" gorm:"primaryKey;type:varchar"`
 	Name           string    `json:"name" gorm:"unique;type:varchar"`
-	URL            string    `json:"url" gorm:"unique;not null;type:varchar"`
+	URL            string    `json:"url" gorm:"not null;type:varchar"`
 	NumberOfClicks uint      `json:"numberOfClicks" gorm:"type:int"`
 	CreatedAt      time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	UpdatedAt      time.Time `json:"updatedAt" gorm:"autoCreateTime"`
